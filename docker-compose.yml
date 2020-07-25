@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+ 
+  db:
+    image: mysql
+    command: --default-autentication-plugin=mysql_native_password
+    volumes:
+      - ./mysql_dump:/docker-entrypoint-initdb.d:z
+    environment:
+      MYSQL_ROOT_PASSWORD: root1
+      MYSQL_DATABASE: gd4_9523_c
+      MYSQL_USER: BlibliSQL
+      MYSQL_PASSWORD: futures1
+    ports:
+      - 3306:3306
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+  
+  php:
+    image: blibliphp
+    volumes:
+      - ./:/app
+    #working_dir: /app
+    environment:
+      - HOSTNAME=192.168.56.105:3306
+      - USERNAME=BlibliSQL
+      - PASSWORD=futures1
+      - DBNAME=gd4_9523_c
+
+  web:
+    image: vultr-nginx
+    volumes: 
+      - ./:/app
+    depends_on:
+      - php
+    ports:
+      - 80:80 
